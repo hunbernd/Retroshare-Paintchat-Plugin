@@ -218,7 +218,7 @@ void PaintChatWindow::on_pushButtonClear_clicked()
 //	paintChatService->init(chatId.toStdString(),res);
 //	paintChatService->sendInit(chatId.toStdString(),res);
 
-
+	on_haveUpdate();
 }
 
 void PaintChatWindow::on_pushButtonCopy_clicked()
