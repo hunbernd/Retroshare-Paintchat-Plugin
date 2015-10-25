@@ -223,13 +223,36 @@ void PaintChatWindow::on_pushButtonCopy_clicked()
     QApplication::clipboard()->setImage(ui->paintWidget->getImage());
 }
 
-std::string PaintChatWindow::imgToHtmlString(QImage img)
+std::string PaintChatWindow::imgToHtmlString(QImage img, int maxsize)
 {
     QByteArray ba;
     QBuffer buffer(&ba);
+	std::string html;
+	img = img.copy(0, 0, 300, 300);
+	maxsize = maxsize - std::string("<img src=\"data:image/png;base64,\"/>").size();
+
+	//Cropping algoritmh from here: http://stackoverflow.com/questions/10678015/how-to-auto-crop-an-image-white-border-in-java
+	QRgb bc = img.pixel(0,0);
+	int l=img.width(), r=-1, t=img.height(), b=-1;
+	for(int y=0; y<img.height(); ++y) {
+		for(int x=0; x<img.width(); ++x) {
+			if(bc != img.pixel(x, y)) {
+				if(x<l) l=x;
+				if(x>r) r=x;
+				if(y<t) t=y;
+				if(y>b) b=y;
+			}
+		}
+	}
+	if(r == -1)
+		img = img.copy(0, 0, 1, 1); //TODO better handling of empty images
+	else
+		img = img.copy(l, t, r-l+1, b-t+1);
+
     buffer.open(QIODevice::WriteOnly);
-    img.save(&buffer, "PNG");
-    return std::string(std::string("<img src=\"data:image/png;base64,") + ba.toBase64().data() + "\"/>");
+	img.save(&buffer, "PNG", 0);
+	html = std::string("<img src=\"data:image/png;base64,") + ba.toBase64().data() + "\"/>";
+	return html;
 }
 
 void PaintChatWindow::on_pushButtonSend_clicked()

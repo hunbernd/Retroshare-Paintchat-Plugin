@@ -46,7 +46,7 @@ private:
     void resetPenButtons();
     void colorChanged();
 
-    static std::string imgToHtmlString(QImage img);
+	static std::string imgToHtmlString(QImage img, int maxsize = 0);
     
     QColor currentColor;
     Ui::PaintChatWindow *ui;
