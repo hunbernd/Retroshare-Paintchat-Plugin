@@ -111,23 +111,23 @@ void PaintChatWindow::on_haveUpdate(){
 }
 
 void PaintChatWindow::on_timer(){
-	if((chatType == ChatWidget::CHATTYPE_PRIVATE)&&(paintChatService->haveUpdate(chatId.toStdString()))){
-        std::cerr<<"PaintChatWindow::on_timer(): paintChatService->haveUpdate(peerId) returned true"<<std::endl;
-        updateImage();
-    }
+//	if((chatType == ChatWidget::CHATTYPE_PRIVATE)&&(paintChatService->haveUpdate(chatId.toStdString()))){
+//        std::cerr<<"PaintChatWindow::on_timer(): paintChatService->haveUpdate(peerId) returned true"<<std::endl;
+//        updateImage();
+//    }
 }
 
 void PaintChatWindow::updateImage(){
-	if(paintChatService->receivedInit(chatId.toStdString())){
-        ui->paintWidget->fillImage(Qt::white);
-        ImageResource res;
-        res.fromQImage(ui->paintWidget->getImage());
-		paintChatService->init(chatId.toStdString(),res);
-    }else{
-        ImageResource res;
-        res.fromQImage(ui->paintWidget->getImage());
-		ui->paintWidget->setImage(paintChatService->update(chatId.toStdString(),res).toQImage());
-    }
+//	if(paintChatService->receivedInit(chatId.toStdString())){
+//        ui->paintWidget->fillImage(Qt::white);
+//        ImageResource res;
+//        res.fromQImage(ui->paintWidget->getImage());
+//		paintChatService->init(chatId.toStdString(),res);
+//    }else{
+//        ImageResource res;
+//        res.fromQImage(ui->paintWidget->getImage());
+//		ui->paintWidget->setImage(paintChatService->update(chatId.toStdString(),res).toQImage());
+//    }
 }
 
 void PaintChatWindow::resetPenButtons(){
@@ -210,8 +210,8 @@ void PaintChatWindow::on_pushButtonClear_clicked()
     ui->paintWidget->fillImage(Qt::white);
     ImageResource res;
     res.fromQImage(ui->paintWidget->getImage());
-	paintChatService->init(chatId.toStdString(),res);
-	paintChatService->sendInit(chatId.toStdString(),res);
+//	paintChatService->init(chatId.toStdString(),res);
+//	paintChatService->sendInit(chatId.toStdString(),res);
 
 
 }
