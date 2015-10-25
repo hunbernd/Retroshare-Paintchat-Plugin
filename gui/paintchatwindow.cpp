@@ -98,13 +98,13 @@ void PaintChatWindow::on_haveUpdate(){
     if(chatType == ChatWidget::CHATTYPE_LOBBY)
     {
         QImage i = ui->paintWidget->getImage();
-        QPainter p(&i);
-        p.setPen(Qt::black);
-        p.setBrush(Qt::NoBrush);
-        p.drawRect(0, 0, 302, 102);
-        ui->paintWidget->setImage(i);
+//        QPainter p(&i);
+//        p.setPen(Qt::black);
+//        p.setBrush(Qt::NoBrush);
+//        p.drawRect(0, 0, 302, 102);
+//        ui->paintWidget->setImage(i);
 
-        QImage img = ui->paintWidget->getImage().copy(1, 1, 301, 101);
+		QImage img = ui->paintWidget->getImage();
         std::string html = imgToHtmlString(img);
         ui->progressBar->setValue((html.size()*100)/MAX_LOBBY_MSG_SIZE);
 
@@ -241,7 +241,7 @@ void PaintChatWindow::on_pushButtonSend_clicked()
     }
     if(chatType == ChatWidget::CHATTYPE_LOBBY)
     {
-        QImage img = ui->paintWidget->getImage().copy(1, 1, 301, 101);
+		QImage img = ui->paintWidget->getImage();
         html = imgToHtmlString(img);
         if(html.size() > MAX_LOBBY_MSG_SIZE)
         {
