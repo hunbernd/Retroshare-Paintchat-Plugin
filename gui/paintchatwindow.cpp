@@ -10,6 +10,7 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsidentity.h>
+#include <unistd.h>
 
 const int MAX_LOBBY_MSG_SIZE = 6000;
 
@@ -65,7 +66,11 @@ PaintChatWindow::PaintChatWindow(QWidget *parent, ChatId chatId, ChatWidget *cha
 		RsGxsId gxsid;
 		RsIdentityDetails details;
 		rsMsgs->getIdentityForChatLobby(id, gxsid);
-		rsIdentity->getIdDetails(gxsid, details);
+		for(int i=0;i<3;++i)
+			if(rsIdentity->getIdDetails(gxsid,details))
+				break ;
+			else
+				usleep(1000*300) ;
 		nick = details.mNickname;
 
 		ChatLobbyInfo info;
