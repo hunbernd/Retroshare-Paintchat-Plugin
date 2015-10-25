@@ -9,12 +9,13 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
+#include <retroshare/rsidentity.h>
 
 const int MAX_LOBBY_MSG_SIZE = 6000;
 
 #include "interface/paintchatservice.h"
-PaintChatWindow::PaintChatWindow(QWidget *parent, std::string peerId, ChatWidget *chatWidget) :
-    QMainWindow(parent), peerId(peerId), chatType(ChatWidget::CHATTYPE_UNKNOWN), chatWidget(chatWidget),
+PaintChatWindow::PaintChatWindow(QWidget *parent, ChatId chatId, ChatWidget *chatWidget) :
+	QMainWindow(parent), chatId(chatId), chatType(ChatWidget::CHATTYPE_UNKNOWN), chatWidget(chatWidget),
     ui(new Ui::PaintChatWindow)
 {
     ui->setupUi(this);
@@ -40,38 +41,37 @@ PaintChatWindow::PaintChatWindow(QWidget *parent, std::string peerId, ChatWidget
     ui->pushButtonPrimaryColor->setIcon(pix);
 
     chatType = chatWidget->chatType();
-    if(chatType == ChatWidget::CHATTYPE_PRIVATE)
-    {
-        ui->label->setText(QString::fromStdString(std::string("Paintchat with ")+rsPeers->getPeerName(peerId)));
-        setWindowTitle(QString::fromStdString(rsPeers->getPeerName(peerId)+" - PaintChat"));
+// Disabled
+//    if(chatType == ChatWidget::CHATTYPE_PRIVATE)
+//    {
+//        ui->label->setText(QString::fromStdString(std::string("Paintchat with ")+rsPeers->getPeerName(peerId)));
+//        setWindowTitle(QString::fromStdString(rsPeers->getPeerName(peerId)+" - PaintChat"));
 
-        ImageResource res;
-        res.fromQImage(ui->paintWidget->getImage());
-        paintChatService->init(peerId,res);
+//        ImageResource res;
+//        res.fromQImage(ui->paintWidget->getImage());
+//        paintChatService->init(peerId,res);
 
-        ui->progressBar->hide();
-    }
+//        ui->progressBar->hide();
+//    }
     if(chatType == ChatWidget::CHATTYPE_LOBBY)
     {
         ui->progressBar->setRange(0,100);
         ui->progressBar->setValue(0);
 
         ChatLobbyId id;
-        rsMsgs->isLobbyId(peerId, id);
+		id = chatId.toLobbyId();
         std::string nick, lobby;
-        std::list<ChatLobbyInfo> cil;
-        rsMsgs->getChatLobbyList(cil);
-        std::list<ChatLobbyInfo>::iterator it;
-        for(it = cil.begin(); it != cil.end(); it++)
-        {
-            ChatLobbyInfo ci = *it;
-            if(ci.lobby_id == id)
-            {
-                nick = ci.nick_name;
-                lobby = ci.lobby_name;
-                break;
-            }
-        }
+
+		RsGxsId gxsid;
+		RsIdentityDetails details;
+		rsMsgs->getIdentityForChatLobby(id, gxsid);
+		rsIdentity->getIdDetails(gxsid, details);
+		nick = details.mNickname;
+
+		ChatLobbyInfo info;
+		rsMsgs->getChatLobbyInfo(id, info);
+		lobby = info.lobby_name;
+
         std::string label = nick + "@" + lobby;
         ui->label->setText(QString::fromStdString(label));
         setWindowTitle(QString::fromStdString(label + " - PaintChat"));
@@ -111,22 +111,22 @@ void PaintChatWindow::on_haveUpdate(){
 }
 
 void PaintChatWindow::on_timer(){
-    if((chatType == ChatWidget::CHATTYPE_PRIVATE)&&(paintChatService->haveUpdate(peerId))){
+	if((chatType == ChatWidget::CHATTYPE_PRIVATE)&&(paintChatService->haveUpdate(chatId.toStdString()))){
         std::cerr<<"PaintChatWindow::on_timer(): paintChatService->haveUpdate(peerId) returned true"<<std::endl;
         updateImage();
     }
 }
 
 void PaintChatWindow::updateImage(){
-    if(paintChatService->receivedInit(peerId)){
+	if(paintChatService->receivedInit(chatId.toStdString())){
         ui->paintWidget->fillImage(Qt::white);
         ImageResource res;
         res.fromQImage(ui->paintWidget->getImage());
-        paintChatService->init(peerId,res);
+		paintChatService->init(chatId.toStdString(),res);
     }else{
         ImageResource res;
         res.fromQImage(ui->paintWidget->getImage());
-        ui->paintWidget->setImage(paintChatService->update(peerId,res).toQImage());
+		ui->paintWidget->setImage(paintChatService->update(chatId.toStdString(),res).toQImage());
     }
 }
 
@@ -210,8 +210,8 @@ void PaintChatWindow::on_pushButtonClear_clicked()
     ui->paintWidget->fillImage(Qt::white);
     ImageResource res;
     res.fromQImage(ui->paintWidget->getImage());
-    paintChatService->init(peerId,res);
-    paintChatService->sendInit(peerId,res);
+	paintChatService->init(chatId.toStdString(),res);
+	paintChatService->sendInit(chatId.toStdString(),res);
 
 
 }
@@ -249,10 +249,10 @@ void PaintChatWindow::on_pushButtonSend_clicked()
             return;
         }
     }
-    rsMsgs->sendPrivateChat(peerId, std::wstring(html.begin(), html.end()));
-    chatWidget->addChatMsg(false, QString::fromStdString(rsPeers->getPeerName(rsPeers->getOwnId())),
-                           QDateTime::currentDateTime(), QDateTime::currentDateTime(),
-                           QString::fromStdString(html), ChatWidget::MSGTYPE_NORMAL );
+	rsMsgs->sendChat(ChatId(chatId), html);
+//    chatWidget->addChatMsg(false, QString::fromStdString(rsPeers->getPeerName(rsPeers->getOwnId())),
+//                           QDateTime::currentDateTime(), QDateTime::currentDateTime(),
+//                           QString::fromStdString(html), ChatWidget::MSGTYPE_NORMAL );
 }
 
 void PaintChatWindow::penChanged()

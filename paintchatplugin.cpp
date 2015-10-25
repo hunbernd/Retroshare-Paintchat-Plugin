@@ -1,3 +1,5 @@
+#include <util/rsversioninfo.h>
+
 #include "paintchatplugin.h"
 
 #include "gui/paintchatpopupchatdialog.h"
@@ -22,7 +24,7 @@ extern "C" {
     // It will be tested by RS to load the plugin automatically, since it is safe to load plugins
     // with same revision numbers, assuming that the revision numbers are up-to-date.
     //
-    uint32_t RETROSHARE_PLUGIN_revision = SVN_REVISION_NUMBER ;
+	uint32_t RETROSHARE_PLUGIN_revision = RS_REVISION_NUMBER ;
 
     // This symbol contains the svn revision number grabbed from the executable.
     // It will be tested by RS to load the plugin automatically, since it is safe to load plugins
@@ -44,10 +46,11 @@ std::string PaintChatPlugin::getShortPluginDescription()const{
 std::string PaintChatPlugin::getPluginName()const{
     return std::string("PaintChat");
 }
-void PaintChatPlugin::getPluginVersion(int &major, int &minor, int &svn_rev)const{
-    major=5;
-    minor=4;
-    svn_rev=SVN_REVISION_NUMBER;
+void PaintChatPlugin::getPluginVersion(int &major, int &minor, int &build, int &svn_rev)const{
+	major = RS_MAJOR_VERSION;
+	minor = RS_MINOR_VERSION;
+	build = RS_BUILD_NUMBER;
+	svn_rev = RS_REVISION_NUMBER;
 }
 void PaintChatPlugin::setInterfaces(RsPlugInInterfaces &interfaces){
 
@@ -69,9 +72,9 @@ RsPQIService *PaintChatPlugin::rs_pqi_service()const{
 
 ChatWidgetHolder *PaintChatPlugin::qt_get_chat_widget_holder(ChatWidget *chatWidget) const{
     switch (chatWidget->chatType()) {
-    case ChatWidget::CHATTYPE_PRIVATE:
     case ChatWidget::CHATTYPE_LOBBY:
          return new PaintChatPopupChatDialog(chatWidget);
+	case ChatWidget::CHATTYPE_PRIVATE:
     case ChatWidget::CHATTYPE_UNKNOWN:
     case ChatWidget::CHATTYPE_DISTANT:
         break;

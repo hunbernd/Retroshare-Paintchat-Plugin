@@ -20,6 +20,7 @@ public:
     virtual bool haveUpdate(std::string id);
     virtual bool receivedInit(std::string id);
     virtual ImageResource update(std::string id, ImageResource res);
+	RsServiceInfo getServiceInfo();
 
 private:
 

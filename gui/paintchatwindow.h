@@ -14,7 +14,7 @@ class PaintChatWindow : public QMainWindow
     Q_OBJECT
     
 public:
-    explicit PaintChatWindow(QWidget *parent, std::string peerId, ChatWidget *chatWidget);
+	explicit PaintChatWindow(QWidget *parent, ChatId chatId, ChatWidget *chatWidget);
     ~PaintChatWindow();
 
 private slots:
@@ -50,7 +50,7 @@ private:
     
     QColor currentColor;
     Ui::PaintChatWindow *ui;
-    std::string peerId;
+	ChatId chatId;
     ChatWidget::ChatType chatType;
     ChatWidget *chatWidget;
 

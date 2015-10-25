@@ -11,7 +11,7 @@ public:
     PaintChatPlugin();
     virtual ~PaintChatPlugin();
 
-    virtual void getPluginVersion(int& major,int& minor,int& svn_rev) const ;
+	virtual void getPluginVersion(int& major,int& minor, int& build, int& svn_rev) const ;
     virtual void setPlugInHandler(RsPluginHandler *pgHandler);
 
 

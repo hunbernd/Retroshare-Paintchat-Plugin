@@ -2,6 +2,11 @@
 
 CONFIG += qt uic qrc 
 
+greaterThan(QT_MAJOR_VERSION, 4) {
+	# Qt 5
+	QT += widgets
+}
+
 INCLUDEPATH += ../../retroshare-gui/src/temp/ui
 
 SOURCES = \

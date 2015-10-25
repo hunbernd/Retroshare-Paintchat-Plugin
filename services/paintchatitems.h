@@ -3,10 +3,11 @@
 
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
-#include "serialiser/rstlvtypes.h"
+#include "serialiser/rstlvitem.h"
+#include "serialiser/rstlvbinary.h"
 
 // --------TODO------------
-const uint16_t RS_SERVICE_TYPE_PAINTCHAT_PLUGIN=RS_SERVICE_TYPE_PLUGIN_ARADO_TEST_ID1;
+const uint16_t RS_SERVICE_TYPE_PAINTCHAT_PLUGIN = 0x2100;
 
 
 class RsPaintChatItem: public RsItem{

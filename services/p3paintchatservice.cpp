@@ -6,7 +6,7 @@
 PaintChatService *paintChatService=NULL;
 
 p3PaintChatService::p3PaintChatService(RsPluginHandler *handler):
-    RsPQIService(RS_SERVICE_TYPE_PAINTCHAT_PLUGIN,0,5,handler)//---------frage: was ist configtype?????
+	RsPQIService(RS_SERVICE_TYPE_PAINTCHAT_PLUGIN,0,handler)//---------frage: was ist configtype?????
 {
     addSerialType(new RsPaintChatSerialiser());
 }
@@ -37,17 +37,17 @@ int p3PaintChatService::tick(){
     {
         std::cerr<<"p3PaintChatService::tick(): received Item from "<<item->PeerId()<<std::endl;
         RsPaintChatItem *paintChatItem=dynamic_cast<RsPaintChatItem*>(item);
-        std::map<std::string,SyncEngine<ImageResource,ImageDiff>*>::iterator it=syncEngines.find(item->PeerId());
+		std::map<std::string,SyncEngine<ImageResource,ImageDiff>*>::iterator it=syncEngines.find(item->PeerId().toStdString());
         SyncEngine<ImageResource,ImageDiff>* engine;
         if(it==syncEngines.end()){
             std::cerr<<"p3PaintChatService::tick(): no SyncEngine found for "<<item->PeerId()<<std::endl;
-            engine=addPeer(item->PeerId());
+			engine=addPeer(item->PeerId().toStdString());
         }else{
             engine=it->second;
         }
         if(paintChatItem->command==COMMAND_INIT){
             std::cerr<<"p3PaintChatService::tick(): COMMAND_INIT"<<item->PeerId()<<std::endl;
-            receivedInits.push_back(item->PeerId());
+			receivedInits.push_back(item->PeerId().toStdString());
             /*
             ImageResource res;
             res.deserialise(paintChatItem->binData.bin_data,paintChatItem->binData.bin_len);
@@ -82,7 +82,7 @@ void p3PaintChatService::sendInit(std::string id, ImageResource res){
     free(buf);
     */
 
-    item->PeerId(id);
+	item->PeerId(RsPeerId(id));
     // der service wird eigentümer des items
     sendItem(item);
 }
@@ -122,7 +122,23 @@ ImageResource p3PaintChatService::update(std::string id, ImageResource res){
         std::cerr<<"p3PaintChatService::update(): no SyncEngine found for "<<id<<std::endl;
         SyncEngine<ImageResource,ImageDiff>* engine=addPeer(id);
         return engine->update(res);
-    }
+	}
+}
+
+RsServiceInfo p3PaintChatService::getServiceInfo()
+{
+	const std::string L4R_APP_NAME = "PaintChat";
+	const uint16_t L4R_APP_MAJOR_VERSION  =       1;
+	const uint16_t L4R_APP_MINOR_VERSION  =       0;
+	const uint16_t L4R_MIN_MAJOR_VERSION  =       1;
+	const uint16_t L4R_MIN_MINOR_VERSION  =       0;
+
+	return RsServiceInfo(RS_SERVICE_TYPE_PAINTCHAT_PLUGIN,
+						 L4R_APP_NAME,
+						 L4R_APP_MAJOR_VERSION,
+						 L4R_APP_MINOR_VERSION,
+						 L4R_MIN_MAJOR_VERSION,
+						 L4R_MIN_MINOR_VERSION);
 }
 
 SyncEngine<ImageResource,ImageDiff>* p3PaintChatService::addPeer(std::string peerId){
@@ -144,7 +160,7 @@ void p3PaintChatService::PaintChatConnection::sendData(void *data, const uint32_
     RsPaintChatItem* item=new RsPaintChatItem();
     item->command=p3PaintChatService::COMMAND_SYNC;
     item->binData.setBinData(data,size);
-    item->PeerId(connId);
+	item->PeerId(RsPeerId(connId));
     item->print(std::cerr,1);
     // der service wird eigentümer des items
     service->sendItem(item);
