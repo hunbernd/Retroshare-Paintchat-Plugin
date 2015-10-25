@@ -81,6 +81,8 @@ PaintChatWindow::PaintChatWindow(QWidget *parent, ChatId chatId, ChatWidget *cha
         ui->label->setText(QString::fromStdString(label));
         setWindowTitle(QString::fromStdString(label + " - PaintChat"));
     }
+
+	ui->lblWarning->setVisible(false);
 }
 
 PaintChatWindow::~PaintChatWindow()
@@ -105,13 +107,16 @@ void PaintChatWindow::on_haveUpdate(){
 //        ui->paintWidget->setImage(i);
 
 		QImage img = ui->paintWidget->getImage();
-        std::string html = imgToHtmlString(img);
+		std::string html;
+		bool scaled = imgToHtmlString(html, img, MAX_LOBBY_MSG_SIZE);
         ui->progressBar->setValue((html.size()*100)/MAX_LOBBY_MSG_SIZE);
 
         if(html.size()>MAX_LOBBY_MSG_SIZE)
         {
             ui->progressBar->setValue(100);
-        }
+        }		
+		ui->lblImageSize->setText(QString("Image size: %1 bytes").arg(html.size()));
+		ui->lblWarning->setVisible(scaled);
     }
 }
 
@@ -223,13 +228,13 @@ void PaintChatWindow::on_pushButtonCopy_clicked()
     QApplication::clipboard()->setImage(ui->paintWidget->getImage());
 }
 
-std::string PaintChatWindow::imgToHtmlString(QImage img, int maxsize)
+bool PaintChatWindow::imgToHtmlString(std::string& html, QImage img, int maxsize)
 {
+	QImage out;
     QByteArray ba;
     QBuffer buffer(&ba);
-	std::string html;
 	img = img.copy(0, 0, 300, 300);
-	maxsize = maxsize - std::string("<img src=\"data:image/png;base64,\"/>").size();
+	int limit = (maxsize - std::string("<img src=\"data:image/png;base64,\"/>").size() - 2)*3/4;
 
 	//Cropping algoritmh from here: http://stackoverflow.com/questions/10678015/how-to-auto-crop-an-image-white-border-in-java
 	QRgb bc = img.pixel(0,0);
@@ -245,14 +250,33 @@ std::string PaintChatWindow::imgToHtmlString(QImage img, int maxsize)
 		}
 	}
 	if(r == -1)
-		img = img.copy(0, 0, 1, 1); //TODO better handling of empty images
+		out = img.copy(0, 0, 1, 1); //TODO better handling of empty images
 	else
-		img = img.copy(l, t, r-l+1, b-t+1);
+		out = img.copy(l, t, r-l+1, b-t+1);
 
     buffer.open(QIODevice::WriteOnly);
-	img.save(&buffer, "PNG", 0);
+	out.save(&buffer, "PNG", 0);
+	buffer.close();
+
+	if((ba.size() <= limit) || (maxsize == 0))
+	{
+		html = std::string("<img src=\"data:image/png;base64,") + ba.toBase64().data() + "\"/>";
+		return false;
+	}
+
+	//Downscale to fit into the limit
+	int scale = 1;
+	do{
+		scale *= 2;
+		out = img.scaledToWidth(img.width() / scale);
+		ba.clear();
+		buffer.open(QIODevice::WriteOnly);
+		out.save(&buffer, "PNG", 0);
+		buffer.close();
+	}while(ba.size() > limit);
+
 	html = std::string("<img src=\"data:image/png;base64,") + ba.toBase64().data() + "\"/>";
-	return html;
+	return true;
 }
 
 void PaintChatWindow::on_pushButtonSend_clicked()
@@ -260,19 +284,12 @@ void PaintChatWindow::on_pushButtonSend_clicked()
     std::string html;
     if(chatType == ChatWidget::CHATTYPE_PRIVATE)
     {
-        html = imgToHtmlString(ui->paintWidget->getImage());
+		imgToHtmlString(html, ui->paintWidget->getImage());
     }
     if(chatType == ChatWidget::CHATTYPE_LOBBY)
     {
 		QImage img = ui->paintWidget->getImage();
-        html = imgToHtmlString(img);
-        if(html.size() > MAX_LOBBY_MSG_SIZE)
-        {
-            QMessageBox msgBox;
-            msgBox.setText(tr("The image is to big to send it in a Chatlobby. Try to remove Details. The Progressbar below the image shows you the image size."));
-            msgBox.exec();
-            return;
-        }
+		imgToHtmlString(html, img, MAX_LOBBY_MSG_SIZE);
     }
 	rsMsgs->sendChat(ChatId(chatId), html);
 //    chatWidget->addChatMsg(false, QString::fromStdString(rsPeers->getPeerName(rsPeers->getOwnId())),
