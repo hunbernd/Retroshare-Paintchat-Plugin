@@ -176,23 +176,20 @@ void PaintChatWindow::on_pushButtonWhite_clicked()
 
 void PaintChatWindow::on_pushButton1px_clicked()
 {
-    resetPenButtons();
-    ui->pushButton1px->setChecked(true);
     ui->paintWidget->penWidth=1;
+	ui->penWidthSpinBox->setValue(1);
 }
 
 void PaintChatWindow::on_pushButton4px_clicked()
 {
-    resetPenButtons();
-    ui->pushButton4px->setChecked(true);
     ui->paintWidget->penWidth=4;
+	ui->penWidthSpinBox->setValue(4);
 }
 
 void PaintChatWindow::on_pushButton8px_clicked()
 {
-    resetPenButtons();
-    ui->pushButton8px->setChecked(true);
     ui->paintWidget->penWidth=8;
+	ui->penWidthSpinBox->setValue(8);
 }
 
 void PaintChatWindow::on_pushButtonClear_clicked()

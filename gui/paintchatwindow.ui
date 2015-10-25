@@ -42,7 +42,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="paintchat_images.qrc">
+         <iconset resource="../../../retroshare-gui/src/gui/images.qrc">
           <normaloff>:/images/edit_16.png</normaloff>:/images/edit_16.png</iconset>
         </property>
         <property name="checkable">
@@ -122,7 +122,7 @@
        <string>1px</string>
       </property>
       <property name="checkable">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -138,7 +138,7 @@
        <string>4px</string>
       </property>
       <property name="checkable">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -154,7 +154,7 @@
        <string>8px</string>
       </property>
       <property name="checkable">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -260,6 +260,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../../../retroshare-gui/src/gui/images.qrc"/>
   <include location="paintchat_images.qrc"/>
  </resources>
  <connections/>
