@@ -141,6 +141,18 @@ RsServiceInfo p3PaintChatService::getServiceInfo()
 						 L4R_MIN_MINOR_VERSION);
 }
 
+bool p3PaintChatService::saveList(bool &cleanup, std::list<RsItem *> &)
+{
+	cleanup = true;
+	return true;
+}
+
+bool p3PaintChatService::loadList(std::list<RsItem *> &load)
+{
+	load.clear();
+	return true;
+}
+
 SyncEngine<ImageResource,ImageDiff>* p3PaintChatService::addPeer(std::string peerId){
     std::cerr<<"p3PaintChatService::addPeer(\""<<peerId<<"\")"<<std::endl;
     PaintChatConnection* conn=new PaintChatConnection(peerId,this);

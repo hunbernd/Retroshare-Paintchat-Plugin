@@ -22,6 +22,9 @@ public:
     virtual ImageResource update(std::string id, ImageResource res);
 	RsServiceInfo getServiceInfo();
 
+	virtual bool saveList(bool& cleanup, std::list<RsItem*>&) ;
+	virtual bool loadList(std::list<RsItem*>& load) ;
+
 private:
 
     SyncEngine<ImageResource,ImageDiff>* addPeer(std::string peerId);
