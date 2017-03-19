@@ -15,8 +15,8 @@
 const int MAX_LOBBY_MSG_SIZE = 6000;
 
 #include "interface/paintchatservice.h"
-PaintChatWindow::PaintChatWindow(QWidget *parent, ChatId chatId, ChatWidget *chatWidget) :
-	QMainWindow(parent), chatId(chatId), chatType(ChatWidget::CHATTYPE_UNKNOWN), chatWidget(chatWidget),
+PaintChatWindow::PaintChatWindow(QWidget *parent, ChatId chatId, ChatWidget *chatWidget, RsIdentity *identity, RsMsgs *msgs) :
+	QMainWindow(parent), chatId(chatId), chatType(ChatWidget::CHATTYPE_UNKNOWN), chatWidget(chatWidget), mIdentity(identity), mMsgs(msgs),
     ui(new Ui::PaintChatWindow)
 {
     ui->setupUi(this);
@@ -65,16 +65,16 @@ PaintChatWindow::PaintChatWindow(QWidget *parent, ChatId chatId, ChatWidget *cha
 
 		RsGxsId gxsid;
 		RsIdentityDetails details;
-		rsMsgs->getIdentityForChatLobby(id, gxsid);
+		mMsgs->getIdentityForChatLobby(id, gxsid);
 		for(int i=0;i<3;++i)
-			if(rsIdentity->getIdDetails(gxsid,details))
+			if(mIdentity->getIdDetails(gxsid,details))
 				break ;
 			else
 				usleep(1000*300) ;
 		nick = details.mNickname;
 
 		ChatLobbyInfo info;
-		rsMsgs->getChatLobbyInfo(id, info);
+		mMsgs->getChatLobbyInfo(id, info);
 		lobby = info.lobby_name;
 
         std::string label = nick + "@" + lobby;
@@ -291,7 +291,7 @@ void PaintChatWindow::on_pushButtonSend_clicked()
 		QImage img = ui->paintWidget->getImage();
 		imgToHtmlString(html, img, MAX_LOBBY_MSG_SIZE);
     }
-	rsMsgs->sendChat(ChatId(chatId), html);
+	mMsgs->sendChat(ChatId(chatId), html);
 //    chatWidget->addChatMsg(false, QString::fromStdString(rsPeers->getPeerName(rsPeers->getOwnId())),
 //                           QDateTime::currentDateTime(), QDateTime::currentDateTime(),
 //                           QString::fromStdString(html), ChatWidget::MSGTYPE_NORMAL );

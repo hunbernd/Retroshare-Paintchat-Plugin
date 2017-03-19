@@ -1,9 +1,9 @@
 #include "paintchatpopupchatdialog.h"
 
-PaintChatPopupChatDialog::PaintChatPopupChatDialog(ChatWidget *chatWidget)
+PaintChatPopupChatDialog::PaintChatPopupChatDialog(ChatWidget *chatWidget, RsIdentity *identity, RsMsgs *msgs)
     : QObject(), ChatWidgetHolder(chatWidget)
 {
-	paintChatWindow=new PaintChatWindow(chatWidget, mChatWidget->getChatId(), mChatWidget);
+	paintChatWindow=new PaintChatWindow(chatWidget, mChatWidget->getChatId(), mChatWidget, identity, msgs);
 
     paintChatWindow->hide();
 

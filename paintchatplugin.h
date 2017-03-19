@@ -4,6 +4,8 @@
 #include <retroshare/rsplugin.h>
 #include "services/paintchatitems.h"
 #include "services/p3paintchatservice.h"
+#include <retroshare/rsmsgs.h>
+#include <retroshare/rsidentity.h>
 
 class PaintChatPlugin : public RsPlugin
 {
@@ -31,6 +33,8 @@ private:
     // keine ahnung warum mutable
     mutable p3PaintChatService *mService;
     mutable QIcon *mIcon;
+	RsMsgs *mMsgs;
+	RsIdentity *mIdentity;
 };
 
 #endif // PAINTCHATPLUGIN_H

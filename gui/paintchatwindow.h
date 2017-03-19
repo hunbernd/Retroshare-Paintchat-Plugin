@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QTimer>
 #include <gui/chat/ChatWidget.h>
+#include <retroshare/rsmsgs.h>
+#include <retroshare/rsidentity.h>
 
 namespace Ui {
 class PaintChatWindow;
@@ -14,7 +16,7 @@ class PaintChatWindow : public QMainWindow
     Q_OBJECT
     
 public:
-	explicit PaintChatWindow(QWidget *parent, ChatId chatId, ChatWidget *chatWidget);
+	explicit PaintChatWindow(QWidget *parent, ChatId chatId, ChatWidget *chatWidget, RsIdentity *identity, RsMsgs *msgs);
     ~PaintChatWindow();
 
 private slots:
@@ -55,6 +57,8 @@ private:
     ChatWidget *chatWidget;
 
     QTimer *timer;
+	RsIdentity *mIdentity;
+	RsMsgs *mMsgs;
 };
 
 #endif // PAINTCHATWINDOW_H

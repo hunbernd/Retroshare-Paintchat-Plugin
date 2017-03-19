@@ -53,7 +53,8 @@ void PaintChatPlugin::getPluginVersion(int &major, int &minor, int &build, int &
 	svn_rev = RS_REVISION_NUMBER;
 }
 void PaintChatPlugin::setInterfaces(RsPlugInInterfaces &interfaces){
-
+	mIdentity = interfaces.mIdentity;
+	mMsgs = interfaces.mMsgs;
 }
 void PaintChatPlugin::setPlugInHandler(RsPluginHandler *pgHandler){
     std::cerr<<"PaintChatPlugin::setPlugInHandler()"<<std::endl;
@@ -73,7 +74,7 @@ RsPQIService *PaintChatPlugin::rs_pqi_service()const{
 ChatWidgetHolder *PaintChatPlugin::qt_get_chat_widget_holder(ChatWidget *chatWidget) const{
     switch (chatWidget->chatType()) {
     case ChatWidget::CHATTYPE_LOBBY:
-         return new PaintChatPopupChatDialog(chatWidget);
+		 return new PaintChatPopupChatDialog(chatWidget, mIdentity, mMsgs);
 	case ChatWidget::CHATTYPE_PRIVATE:
     case ChatWidget::CHATTYPE_UNKNOWN:
     case ChatWidget::CHATTYPE_DISTANT:
