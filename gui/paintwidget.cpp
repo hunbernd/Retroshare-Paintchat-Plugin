@@ -4,7 +4,7 @@
 #include <iostream>
 
 PaintWidget::PaintWidget(QWidget *parent) :
-    QWidget(parent),image(500,500,QImage::Format_RGB32),color(Qt::black),penWidth(1)
+	QWidget(parent),image(300,300,QImage::Format_RGB32),color(Qt::black),penWidth(1)
 {
     fillImage(Qt::white);
 }

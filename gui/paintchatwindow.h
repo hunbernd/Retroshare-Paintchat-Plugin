@@ -45,14 +45,14 @@ private:
     void updateImage();
     void resetPenButtons();
     void colorChanged();
-
-	static bool imgToHtmlString(std::string &html, QImage img, int maxsize = 0);
+	uint32_t maxMessageSize();
     
     QColor currentColor;
     Ui::PaintChatWindow *ui;
 	ChatId chatId;
     ChatWidget::ChatType chatType;
     ChatWidget *chatWidget;
+	int MAX_LOBBY_MSG_SIZE;
 
     QTimer *timer;
 };
