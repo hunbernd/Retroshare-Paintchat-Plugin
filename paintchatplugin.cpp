@@ -1,5 +1,3 @@
-#include <util/rsversioninfo.h>
-
 #include "paintchatplugin.h"
 
 #include "gui/paintchatpopupchatdialog.h"
@@ -13,6 +11,9 @@ extern "C" {
     // - always respect the C linkage convention
     // - always return an object of type RsPlugin*
     //
+#ifdef WIN32
+	__declspec(dllexport)
+#endif
     void *RETROSHARE_PLUGIN_provide()
     {
         static PaintChatPlugin *p = new PaintChatPlugin() ;
@@ -24,16 +25,22 @@ extern "C" {
     // It will be tested by RS to load the plugin automatically, since it is safe to load plugins
     // with same revision numbers, assuming that the revision numbers are up-to-date.
     //
-	uint32_t RETROSHARE_PLUGIN_revision = RS_REVISION_NUMBER ;
+#ifdef WIN32
+	__declspec(dllexport)
+#endif
+	uint32_t RETROSHARE_PLUGIN_revision = 1 ;
 
     // This symbol contains the svn revision number grabbed from the executable.
     // It will be tested by RS to load the plugin automatically, since it is safe to load plugins
     // with same revision numbers, assuming that the revision numbers are up-to-date.
     //
+#ifdef WIN32
+	__declspec(dllexport)
+#endif
     uint32_t RETROSHARE_PLUGIN_api = RS_PLUGIN_API_VERSION ;
 }
 
-PaintChatPlugin::PaintChatPlugin():mService(NULL), mIcon(NULL) {
+PaintChatPlugin::PaintChatPlugin(): mIcon(NULL) {
     std::cerr<<"PaintChatPlugin::PaintChatPlugin()"<<std::endl;
 }
 PaintChatPlugin::~PaintChatPlugin(){
@@ -49,8 +56,8 @@ std::string PaintChatPlugin::getPluginName()const{
 void PaintChatPlugin::getPluginVersion(int &major, int &minor, int &build, int &svn_rev)const{
 	major = RS_MAJOR_VERSION;
 	minor = RS_MINOR_VERSION;
-	build = RS_BUILD_NUMBER;
-	svn_rev = RS_REVISION_NUMBER;
+	build = RS_MINI_VERSION;
+	svn_rev = 1;
 }
 void PaintChatPlugin::setInterfaces(RsPlugInInterfaces &interfaces){
 
@@ -61,13 +68,13 @@ void PaintChatPlugin::setPlugInHandler(RsPluginHandler *pgHandler){
 }
 
 RsPQIService *PaintChatPlugin::rs_pqi_service()const{
-    std::cerr<<"PaintChatPlugin::rs_pqi_service()"<<std::endl;
-    if(mService==NULL){
-        std::cerr<<"PaintChatPlugin::rs_pqi_service(): creating new p3PaintChatService"<<std::endl;
-        mService=new p3PaintChatService(mPlugInHandler);
-        paintChatService=mService;
-    }
-    return mService;
+//    std::cerr<<"PaintChatPlugin::rs_pqi_service()"<<std::endl;
+//    if(mService==NULL){
+//        std::cerr<<"PaintChatPlugin::rs_pqi_service(): creating new p3PaintChatService"<<std::endl;
+//        mService=new p3PaintChatService(mPlugInHandler);
+//        paintChatService=mService;
+//    }
+	return nullptr;
 }
 
 ChatWidgetHolder *PaintChatPlugin::qt_get_chat_widget_holder(ChatWidget *chatWidget) const{

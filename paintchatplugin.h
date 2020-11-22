@@ -2,8 +2,6 @@
 #define PAINTCHATPLUGIN_H
 
 #include <retroshare/rsplugin.h>
-#include "services/paintchatitems.h"
-#include "services/p3paintchatservice.h"
 
 class PaintChatPlugin : public RsPlugin
 {
@@ -20,7 +18,7 @@ public:
     virtual void setInterfaces(RsPlugInInterfaces& interfaces);
 
     virtual RsPQIService   *rs_pqi_service() 			const	;
-    virtual uint16_t        rs_service_id()         const { return RS_SERVICE_TYPE_PAINTCHAT_PLUGIN ; }
+	virtual uint16_t        rs_service_id()         const { return 0x255 ; }
 
     virtual ChatWidgetHolder *qt_get_chat_widget_holder(ChatWidget *chatWidget) const;
 
@@ -29,7 +27,6 @@ public:
 private:
     RsPluginHandler *mPlugInHandler;
     // keine ahnung warum mutable
-    mutable p3PaintChatService *mService;
     mutable QIcon *mIcon;
 };
 

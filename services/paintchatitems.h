@@ -1,7 +1,7 @@
 #ifndef PAINTCHATITEMS_H
 #define PAINTCHATITEMS_H
 
-#include "serialiser/rsserviceids.h"
+//#include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvitem.h"
 #include "serialiser/rstlvbinary.h"

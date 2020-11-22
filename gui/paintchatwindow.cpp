@@ -14,7 +14,6 @@
 
 const int MAX_LOBBY_MSG_SIZE = 6000;
 
-#include "interface/paintchatservice.h"
 PaintChatWindow::PaintChatWindow(QWidget *parent, ChatId chatId, ChatWidget *chatWidget) :
 	QMainWindow(parent), chatId(chatId), chatType(ChatWidget::CHATTYPE_UNKNOWN), chatWidget(chatWidget),
     ui(new Ui::PaintChatWindow)
@@ -215,8 +214,8 @@ void PaintChatWindow::on_pushButtonClear_clicked()
     // tut nicht, vielleicht zu große items?
 
     ui->paintWidget->fillImage(Qt::white);
-    ImageResource res;
-    res.fromQImage(ui->paintWidget->getImage());
+//    ImageResource res;
+//    res.fromQImage(ui->paintWidget->getImage());
 //	paintChatService->init(chatId.toStdString(),res);
 //	paintChatService->sendInit(chatId.toStdString(),res);
 
